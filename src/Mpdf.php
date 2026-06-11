@@ -8948,7 +8948,9 @@ class Mpdf implements \Psr\Log\LoggerAwareInterface
 		$c = explode(",", $c[1], 2);
 		foreach ($c as $v) {
 			$v = explode("=", $v, 2);
-			$sp[$v[0]] = $v[1];
+			// Trim trailing object delimiter bytes; PHP 8.3+ raises a warning
+			// for trailing data in unserialize() (upstream mpdf/mpdf#1895)
+			$sp[$v[0]] = trim($v[1], "\xbb\xa4\xac");
 		}
 		return (unserialize($sp['objattr']));
 	}
